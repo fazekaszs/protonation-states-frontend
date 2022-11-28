@@ -24,23 +24,15 @@ const resiConfig: Record<string, (number | string)[]> = {
 
 const parseChar = (char: string, kaType: 'SC' | 'NT' | 'CT'): string | null => {
 
-    if (!(char in resiConfig)) {
-        return null
-    }
+    if (!(char in resiConfig)) return null
 
     const resiValues = resiConfig[char]
 
-    if (kaType === 'SC' && resiValues.length === 2) {
-        return null
-    }
+    if (kaType === 'SC' && resiValues.length === 2) return null
 
-    if (kaType === 'SC') {
-        return `${resiValues[3]}, ${resiValues[2]}`
-    } else if (kaType === 'NT') {
-        return `PosOrNeu, ${resiValues[1]}`
-    } else if (kaType === 'CT') {
-        return `NeuOrNeg, ${resiValues[0]}`
-    }
+    if (kaType === 'SC') return `${resiValues[3]}, ${resiValues[2]}`        
+    else if (kaType === 'NT') return `PosOrNeu, ${resiValues[1]}`        
+    else if (kaType === 'CT') return `NeuOrNeg, ${resiValues[0]}`
 
     return null
 }
@@ -49,9 +41,7 @@ const parseSequence = (sequence: string): string[] | null => {
 
     sequence = sequence.replace("\n", "").replace(" ", "")
 
-    console.log(sequence)
-
-    let output: string[] = new Array()
+    let output: string[] = []
 
     if (sequence[0] !== "*") {
 
@@ -61,8 +51,6 @@ const parseSequence = (sequence: string): string[] | null => {
 
     } else sequence = sequence.slice(1)
 
-    console.log(sequence)
-
     if (sequence[sequence.length - 1] !== "*") {
 
         const ionisableGroup = parseChar(sequence[sequence.length - 1], 'CT')
@@ -71,15 +59,11 @@ const parseSequence = (sequence: string): string[] | null => {
 
     } else sequence = sequence.slice(0, sequence.length - 1)
 
-    console.log(sequence)
-
     for (const resi of sequence) {
 
         const ionisableGroup = parseChar(resi, 'SC')
         if (ionisableGroup) output.push(ionisableGroup)        
     }
-
-    console.log(sequence)
 
     return output
 }

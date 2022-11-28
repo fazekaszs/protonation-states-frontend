@@ -1,7 +1,7 @@
 import * as mui from '@mui/material'
 import { reqResPairType } from '../types'
 
-const protonationDataTable = ({ reqResPair }: { reqResPair: reqResPairType }) => {
+const ProtonationDataTable = ({ reqResPair }: { reqResPair: reqResPairType }) => {
 
     // Extract the useful data from the input
 
@@ -79,4 +79,4 @@ const protonationDataTable = ({ reqResPair }: { reqResPair: reqResPairType }) =>
 
 }
 
-export default protonationDataTable
+export default ProtonationDataTable

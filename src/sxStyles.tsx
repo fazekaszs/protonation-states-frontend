@@ -8,7 +8,7 @@ export const rootBoxStyle = {
     alignItems: 'center'
 }
 
-export const inputBoxStyle = {
+export const cardBoxStyle = {
     display: 'flex',
     flexDirection: 'column',
     position: 'relative',
