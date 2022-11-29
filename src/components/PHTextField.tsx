@@ -1,13 +1,13 @@
 import * as mui from '@mui/material'
 
-type propsType = {
+type PropsType = {
     formName: string, 
     label: string, 
     defaultValue: string,
     disabled: boolean
 }
 
-const PHTextField = (props: propsType) => {
+const PHTextField = (props: PropsType) => {
     return(
         <mui.TextField 
             sx={{width: '25%', margin: '2px'}} 

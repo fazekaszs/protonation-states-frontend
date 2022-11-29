@@ -1,5 +1,7 @@
-export type baseDataType = { sequence: string, ph_range: number[], tol: number }
+export type BaseDataType = { sequence: string, ph_range: number[], tol: number }
 
-export type reqBodyType = { sequence: string[], ph_range: number[], tol: number }
-export type resBodyType = Record<string, number>[]
-export type reqResPairType = { req: reqBodyType, res: resBodyType }
+export type ModifierMapType = Record<string, { remove: boolean, pka: number | null }>
+
+export type ReqBodyType = { sequence: string[], ph_range: number[], tol: number }
+export type ResBodyType = Record<string, number>[]
+export type ReqResPairType = { req: ReqBodyType, res: ResBodyType }

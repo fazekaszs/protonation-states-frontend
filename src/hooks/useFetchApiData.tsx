@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
 import parseSequence from '../sequenceParser'
-import { reqBodyType, resBodyType, reqResPairType } from '../types'
+import { ReqBodyType, ResBodyType, ReqResPairType } from '../types'
 
 const useFetchApiData = () => {
 
-    const [reqResPair, setReqResPair] = useState<reqResPairType | null>(null)
+    const [reqResPair, setReqResPair] = useState<ReqResPairType | null>(null)
 
     const fetchApiData = async (event: React.FormEvent<HTMLFormElement>) => {
 
@@ -29,7 +29,7 @@ const useFetchApiData = () => {
             return
         }
 
-        const reqBody: reqBodyType = {
+        const reqBody: ReqBodyType = {
             sequence: parsedSeq,
             ph_range: ph_range,
             tol: Number.parseFloat(tol.toString())
@@ -40,7 +40,7 @@ const useFetchApiData = () => {
             body: JSON.stringify(reqBody),
             headers: { 'Content-Type': 'application/json' }
         })
-        const resBody: resBodyType = await fetchResult.json()
+        const resBody: ResBodyType = await fetchResult.json()
 
         setReqResPair({ req: reqBody, res: resBody })
     }

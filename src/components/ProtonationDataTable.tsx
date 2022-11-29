@@ -1,7 +1,7 @@
 import * as mui from '@mui/material'
-import { reqResPairType } from '../types'
+import { ReqResPairType } from '../types'
 
-const ProtonationDataTable = ({ reqResPair }: { reqResPair: reqResPairType }) => {
+const ProtonationDataTable = ({ reqResPair }: { reqResPair: ReqResPairType }) => {
 
     // Extract the useful data from the input
 
@@ -10,7 +10,7 @@ const ProtonationDataTable = ({ reqResPair }: { reqResPair: reqResPairType }) =>
 
     // Get the row labels (pH values) and column labels (macrostate charges)
 
-    let tableRowLabels = new Array()
+    let tableRowLabels = []
     let tableColLabelsSet = new Set<number>()
 
     let row_idx = 0
@@ -28,12 +28,12 @@ const ProtonationDataTable = ({ reqResPair }: { reqResPair: reqResPairType }) =>
 
     // Get the table elements
 
-    let tableElements: number[][] = new Array()
+    let tableElements: number[][] = []
 
     row_idx = 0
     for (const macrostates of protonationData) {
 
-        let rowElements: number[] = new Array()
+        let rowElements: number[] = []
 
         rowElements.push(tableRowLabels[row_idx])
 

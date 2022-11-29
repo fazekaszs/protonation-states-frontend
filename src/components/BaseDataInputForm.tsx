@@ -4,10 +4,10 @@ import React from 'react'
 
 import { cardBoxStyle } from '../sxStyles'
 import PHTextField from './PHTextField'
-import { baseDataType } from '../types'
+import { BaseDataType } from '../types'
 
 type propsType = {
-    baseDataSetter: React.Dispatch<React.SetStateAction<baseDataType | null>>,
+    baseDataSetter: React.Dispatch<React.SetStateAction<BaseDataType | null>>,
     disabled: boolean
 }
 
@@ -26,7 +26,7 @@ const formDataParser = (event: React.FormEvent<HTMLFormElement>) => {
         Number.parseFloat(ph_step.toString())
     ]
 
-    const parsedFormData: baseDataType = {
+    const parsedFormData: BaseDataType = {
         sequence: sequence.toString(),
         ph_range: ph_range,
         tol: Number.parseFloat(tol.toString())
@@ -48,13 +48,6 @@ const BaseDataInputForm = (props: propsType) => {
 
     }
 
-    const pHTextFields = [
-        { formName: 'ph_start', label: 'start pH', defaultValue: '1.0', disabled: props.disabled },
-        { formName: 'ph_end', label: 'end pH', defaultValue: '13.0', disabled: props.disabled },
-        { formName: 'ph_step', label: 'delta pH', defaultValue: '0.5', disabled: props.disabled },
-        { formName: 'tol', label: 'tolerance', defaultValue: '0.001', disabled: props.disabled }
-    ].map((tfProps) => PHTextField(tfProps))
-
     return(
         <mui.Box sx={{...cardBoxStyle, width: '40%'}} component='form' onSubmit={submitHandler}>
         
@@ -69,7 +62,10 @@ const BaseDataInputForm = (props: propsType) => {
             />
 
             <mui.Box sx={{ display: 'flex', flexDirection: 'row', width: '80%', margin: '10px' }}>
-                {pHTextFields}
+                <PHTextField formName='ph_start' label='start pH' defaultValue='1.0' disabled={props.disabled} />
+                <PHTextField formName='ph_end' label='end pH' defaultValue='13.0' disabled={props.disabled} />
+                <PHTextField formName='ph_step' label='delta pH' defaultValue='0.5' disabled={props.disabled} />
+                <PHTextField formName='tol' label='tolerance' defaultValue='0.001' disabled={props.disabled} />
             </mui.Box>
 
             <mui.Button type='submit' sx={{ color: props.disabled ? 'red' : 'green' }}>

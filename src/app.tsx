@@ -8,11 +8,11 @@ import BaseDataInputForm from './components/BaseDataInputForm'
 
 import useFetchApiData from './hooks/useFetchApiData'
 import PKaModifierBox from './components/PKaModifierBox'
-import { baseDataType } from './types'
+import { BaseDataType } from './types'
 
 const App = () => {
 
-    const [baseData, setBaseData] = useState<null | baseDataType>(null)
+    const [baseData, setBaseData] = useState<null | BaseDataType>(null)
 
     const {getter: reqResPair, setter: fetchApiData} = useFetchApiData()
 
@@ -21,13 +21,14 @@ const App = () => {
 
             <mui.Box sx={{ display: 'flex', flexDirection: 'row', width: '90%' }}>
                 <BaseDataInputForm baseDataSetter={setBaseData} disabled={baseData !== null} />
-                <PKaModifierBox baseData={baseData} disabled={baseData === null} />
+                <PKaModifierBox baseData={baseData as BaseDataType} disabled={baseData === null} />
             </mui.Box>
             
 
             <mui.Box sx={{...cardBoxStyle, width: '90%', overflow: 'scroll'}}>
-                {reqResPair ? ProtonationDataTable({ reqResPair }) : <p>Your data will appear here!</p>}
+                {reqResPair ? <ProtonationDataTable reqResPair={reqResPair} /> : <p>Your data will appear here!</p>}
             </mui.Box>
+
 
         </mui.Box>
     )

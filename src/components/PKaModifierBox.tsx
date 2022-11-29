@@ -1,30 +1,60 @@
 import * as mui from '@mui/material'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { cardBoxStyle } from "../sxStyles"
-import { baseDataType } from '../types'
+import { BaseDataType, ModifierMapType } from '../types'
 import PKaModifierModalBox from './PKaModifierModalBox'
 
-type propsType = {
-    baseData: baseDataType | null,
+type PropsType = {
+    baseData: BaseDataType,
     disabled: boolean
 }
 
-const PKaModifierBox = (props: propsType) => {
+const PKaModifierBox = (props: PropsType) => {
 
-    const [modalIsOpen, setModalState] = useState(false)
+    const [modalIsOpen, setModalState] = useState<boolean>(false)
+    const [modifiers, setModifiers] = useState<ModifierMapType>({})
+
+    const modifiersToJSX = () => {
+
+        let output = []
+    
+        for (const key in modifiers) {
+            output.push(
+                <mui.ListItemButton onClick={(_event) => delete modifiers[key]}>
+                    <mui.ListItemText 
+                        primary={key} 
+                        secondary={
+                            modifiers[key].remove ? 
+                            'Action: remove ionisable group' : 
+                            `Action: set pKa to ${modifiers[key].pka}`
+                        } />
+                </mui.ListItemButton>
+            )
+        }
+    
+        return output
+    }
+
+    useEffect(() => {
+        setModifiers({})
+    }, [props.baseData, ])
+
+    useEffect(() => {
+        modifiersToJSX()
+    }, [modifiers, ])
 
     return(
         <mui.Box sx={{...cardBoxStyle, width: '60%'}}>
 
             <mui.List sx={{ overflowY: 'scroll', height: '100%', width: '80%' }}>
-                Nothing
+                {modifiersToJSX()}
             </mui.List>
 
             <hr style={{ width: '80%' }} />
 
             <mui.Button disabled={props.disabled} onClick={(_event) => setModalState(true)}>
-                modify entry
+                add modifier
             </mui.Button>
 
             <mui.Button disabled={props.disabled}>
@@ -32,7 +62,10 @@ const PKaModifierBox = (props: propsType) => {
             </mui.Button>
 
             <mui.Modal open={modalIsOpen} onClose={(_event) => setModalState(false)}>
-                <PKaModifierModalBox />
+                <PKaModifierModalBox 
+                    baseData={props.baseData} 
+                    modifiers={modifiers}
+                    setModalState={setModalState} />
             </mui.Modal>
 
         </mui.Box>
