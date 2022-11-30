@@ -1,25 +1,31 @@
-const resiConfig: Record<string, (number | string)[]> = {
-    "G": [2.34, 9.60],
-    "A": [2.34, 9.69],
-    "V": [2.32, 9.62],
-    "L": [2.36, 9.68],
-    "I": [2.36, 9.68],
-    "P": [1.99, 10.6],
-    "M": [2.28, 9.21],
-    "F": [1.83, 9.13],
-    "Y": [2.20, 9.11, 10.07, 'NeuOrNeg'],
-    "W": [2.38, 9.39],
-    "S": [2.21, 9.15],
-    "T": [2.63, 10.43],
-    "C": [1.71, 10.78, 8.33, 'NeuOrNeg'],
-    "X": [1.71, 10.78],  // Cystine
-    "N": [2.02, 8.80],
-    "Q": [2.17, 9.13],
-    "D": [2.09, 9.82, 3.86, 'NeuOrNeg'],
-    "E": [2.19, 9.67, 4.25, 'NeuOrNeg'],
-    "R": [2.17, 9.04, 12.48, 'PosOrNeu'],
-    "H": [1.82, 9.17, 6.00, 'PosOrNeu'],
-    "K": [2.18, 8.95, 10.53, 'PosOrNeu'],
+import { ModifierMapType } from './types'
+
+type resiConfigType = {
+    [x: string]: [number, number] | [number, number, number, string]
+}
+
+const resiConfig: resiConfigType = {
+    'G': [2.34, 9.60],
+    'A': [2.34, 9.69],
+    'V': [2.32, 9.62],
+    'L': [2.36, 9.68],
+    'I': [2.36, 9.68],
+    'P': [1.99, 10.6],
+    'M': [2.28, 9.21],
+    'F': [1.83, 9.13],
+    'Y': [2.20, 9.11, 10.07, 'NeuOrNeg'],
+    'W': [2.38, 9.39],
+    'S': [2.21, 9.15],
+    'T': [2.63, 10.43],
+    'C': [1.71, 10.78, 8.33, 'NeuOrNeg'],
+    'X': [1.71, 10.78],  // Cystine
+    'N': [2.02, 8.80],
+    'Q': [2.17, 9.13],
+    'D': [2.09, 9.82, 3.86, 'NeuOrNeg'],
+    'E': [2.19, 9.67, 4.25, 'NeuOrNeg'],
+    'R': [2.17, 9.04, 12.48, 'PosOrNeu'],
+    'H': [1.82, 9.17, 6.00, 'PosOrNeu'],
+    'K': [2.18, 8.95, 10.53, 'PosOrNeu'],
 }
 
 const parseChar = (char: string, kaType: 'SC' | 'NT' | 'CT'): string | null => {
@@ -37,13 +43,26 @@ const parseChar = (char: string, kaType: 'SC' | 'NT' | 'CT'): string | null => {
     return null
 }
 
-const parseSequence = (sequence: string): string[] | null => {
+const parseSequence = (sequence: string, modifiers: ModifierMapType): string[] | null => {
 
-    sequence = sequence.replace("\n", "").replace(" ", "")
+    sequence = sequence.replace('\n', '').replace(' ', '')
 
     let output: string[] = []
 
-    if (sequence[0] !== "*") {
+    for (let idx = 0; idx < sequence.length; idx++) {
+
+        const scKey = `${idx} ${sequence[idx]} SC`
+        const isInModifiers = scKey in modifiers
+        const foundInConfig = sequence[idx] in resiConfig
+
+        if (!isInModifiers && !foundInConfig) return null
+
+        if (isInModifiers && modifiers[scKey].remove) continue
+
+        // if (isInModifiers)
+    }
+
+    if (sequence[0] !== '*') {
 
         const ionisableGroup = parseChar(sequence[0], 'NT')
         if (!ionisableGroup) return null
@@ -51,7 +70,7 @@ const parseSequence = (sequence: string): string[] | null => {
 
     } else sequence = sequence.slice(1)
 
-    if (sequence[sequence.length - 1] !== "*") {
+    if (sequence[sequence.length - 1] !== '*') {
 
         const ionisableGroup = parseChar(sequence[sequence.length - 1], 'CT')
         if (!ionisableGroup) return null

@@ -1,29 +1,19 @@
 import React, { useState } from 'react'
 import parseSequence from '../sequenceParser'
-import { ReqBodyType, ResBodyType, ReqResPairType } from '../types'
+import { ReqBodyType, ResBodyType, ReqResPairType, BaseDataType, ModifierMapType } from '../types'
 
-const useFetchApiData = () => {
+type HookReturnType = [
+    ReqResPairType | null,
+    (baseData: BaseDataType, modifiers: ModifierMapType) => Promise<void>
+]
+
+const useFetchApiData = (): HookReturnType => {
 
     const [reqResPair, setReqResPair] = useState<ReqResPairType | null>(null)
 
-    const fetchApiData = async (event: React.FormEvent<HTMLFormElement>) => {
+    const fetchApiData = async (baseData: BaseDataType, modifiers: ModifierMapType) => {
 
-        event.preventDefault()
-
-        const data = new FormData(event.currentTarget)
-        const sequence = data.get('sequence') || ''
-        const ph_start = data.get('ph_start') || ''
-        const ph_end = data.get('ph_end') || ''
-        const ph_step = data.get('ph_step') || ''
-        const tol = data.get('tol') || ''
-
-        const ph_range = [
-            Number.parseFloat(ph_start.toString()), 
-            Number.parseFloat(ph_end.toString()), 
-            Number.parseFloat(ph_step.toString())
-        ]
-
-        const parsedSeq = parseSequence(sequence.toString())
+        const parsedSeq = parseSequence(baseData.sequence, modifiers)
         if (!parsedSeq) {
             console.log("FAILED")
             return
@@ -31,8 +21,8 @@ const useFetchApiData = () => {
 
         const reqBody: ReqBodyType = {
             sequence: parsedSeq,
-            ph_range: ph_range,
-            tol: Number.parseFloat(tol.toString())
+            ph_range: baseData.ph_range,
+            tol: baseData.tol
         }
 
         const fetchResult = await fetch('http://localhost:8000/protonations', {
@@ -45,7 +35,7 @@ const useFetchApiData = () => {
         setReqResPair({ req: reqBody, res: resBody })
     }
 
-    return {getter: reqResPair, setter: fetchApiData}
+    return [reqResPair, fetchApiData]
 }
 
 export default useFetchApiData

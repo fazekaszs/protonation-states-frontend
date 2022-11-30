@@ -14,14 +14,22 @@ const App = () => {
 
     const [baseData, setBaseData] = useState<null | BaseDataType>(null)
 
-    const {getter: reqResPair, setter: fetchApiData} = useFetchApiData()
+    const [reqResPair, fetchApiData] = useFetchApiData()
 
     return (
         <mui.Box sx={rootBoxStyle}>
 
             <mui.Box sx={{ display: 'flex', flexDirection: 'row', width: '90%' }}>
-                <BaseDataInputForm baseDataSetter={setBaseData} disabled={baseData !== null} />
-                <PKaModifierBox baseData={baseData as BaseDataType} disabled={baseData === null} />
+
+                <BaseDataInputForm 
+                    baseDataSetter={setBaseData} 
+                    disabled={baseData !== null} />
+
+                <PKaModifierBox 
+                    baseData={baseData as BaseDataType} 
+                    disabled={baseData === null}
+                    apiDataFetcher={fetchApiData} />
+
             </mui.Box>
             
 
@@ -33,7 +41,5 @@ const App = () => {
         </mui.Box>
     )
 }
-
-// 
 
 export default App

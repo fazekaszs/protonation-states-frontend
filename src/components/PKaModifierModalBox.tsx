@@ -16,18 +16,19 @@ const modalBoxStyle = {
     border: '1px solid rgba(100, 100, 100, 0.1)',
     borderRadius: '10px',
     boxShadow: '5px 5px 4px rgba(100, 100, 100, 0.3)',
-    width: '30%'
+    width: '50%'
 }
 
 type PropsType = {
     baseData: BaseDataType,
     modifiers: ModifierMapType,
+    setModifiers: React.Dispatch<React.SetStateAction<ModifierMapType>>,
     setModalState: React.Dispatch<React.SetStateAction<boolean>>,
 }
 
-const createAllowedModifiers = (sequence: string, modifiers: ModifierMapType) => {
+const createAllowedModifiers = (sequence: string, modifiers: ModifierMapType): string[] => {
 
-    let allowedModifiers = []
+    let allowedModifiers: string[] = []
 
     const ntKey = `0 ${sequence[0]} NT`
     if (!(ntKey in modifiers)) allowedModifiers.push(ntKey)
@@ -47,7 +48,8 @@ const createAllowedModifiers = (sequence: string, modifiers: ModifierMapType) =>
 
 const PKaModifierModalBox = (props: PropsType) => {
 
-    const [selectedKey, setSelectedKey] = useState<string>('')
+    const [selectedResidue, setSelectedResidue] = useState<string>('')
+    const [selectedIonType, setSelectedIonType] = useState<string>('')
     const [removeIsChecked, setRemoveIsChecked] = useState<boolean>(false)
 
     const allowedModifiers = createAllowedModifiers(props.baseData.sequence, props.modifiers)
@@ -59,11 +61,15 @@ const PKaModifierModalBox = (props: PropsType) => {
         const data = new FormData(event.currentTarget)
         const pka = data.get('pka') || ''
 
-        props.modifiers[selectedKey] = {
+        let new_modifiers = {...props.modifiers}
+
+        new_modifiers[selectedResidue] = {
             remove: removeIsChecked,
-            pka: removeIsChecked ? null : Number.parseFloat(pka.toString())
+            pka: removeIsChecked ? null : Number.parseFloat(pka.toString()),
+            ionType: selectedIonType
         }
 
+        props.setModifiers(new_modifiers)
         props.setModalState(false)
     }
 
@@ -74,12 +80,12 @@ const PKaModifierModalBox = (props: PropsType) => {
                 <mui.InputLabel>Residue</mui.InputLabel>
                 <mui.Select 
                     labelId='residue-label' 
-                    value={selectedKey} 
-                    onChange={(event) => setSelectedKey(event.target.value)} 
+                    value={selectedResidue} 
+                    onChange={(event) => setSelectedResidue(event.target.value)} 
                     label={'Residue'}
                     name='residue'
                     required={true}
-                >{allowedModifiers.map((m) => <mui.MenuItem value={m}>{m}</mui.MenuItem>)}</mui.Select>
+                >{allowedModifiers.map((m) => <mui.MenuItem key={`menu-item-${m}`} value={m}>{m}</mui.MenuItem>)}</mui.Select>
             </mui.FormControl>
 
             <mui.FormGroup sx={{ margin: '10px' }}>
@@ -95,11 +101,28 @@ const PKaModifierModalBox = (props: PropsType) => {
             </mui.FormGroup>
 
             <mui.TextField 
+                sx={{ margin: '10px' }}
                 name='pka' 
                 label='pKa'
                 required={!removeIsChecked} 
                 disabled={removeIsChecked}
                 inputProps={{ inputMode: 'numeric', pattern: '[0-9]*(\.[0-9]+)?' }} />
+
+            <mui.FormControl fullWidth={true} sx={{ margin: '10px' }}>
+                <mui.InputLabel>Ion type</mui.InputLabel>
+                <mui.Select 
+                    labelId='ion-type-label' 
+                    value={selectedIonType} 
+                    onChange={(event) => setSelectedIonType(event.target.value)} 
+                    label={'Ion type'}
+                    name='ion-type'
+                    required={!removeIsChecked}
+                    disabled={removeIsChecked}
+                >
+                    <mui.MenuItem key={'menu-item-PosOrNeu'} value={'PosOrNeu'}>positive/neutral</mui.MenuItem>
+                    <mui.MenuItem key={'menu-item-NeuOrNeg'} value={'NeuOrNeg'}>neutral/negative</mui.MenuItem>
+                </mui.Select>
+            </mui.FormControl>
 
             <mui.Button type='submit'>add</mui.Button>
 

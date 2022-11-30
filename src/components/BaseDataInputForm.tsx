@@ -20,7 +20,7 @@ const formDataParser = (event: React.FormEvent<HTMLFormElement>) => {
     const ph_step = data.get('ph_step') || ''
     const tol = data.get('tol') || ''
 
-    const ph_range = [
+    const ph_range: [number, number, number] = [
         Number.parseFloat(ph_start.toString()), 
         Number.parseFloat(ph_end.toString()), 
         Number.parseFloat(ph_step.toString())
