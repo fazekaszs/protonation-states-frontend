@@ -66,7 +66,7 @@ const PKaModifierModalBox = (props: PropsType) => {
         new_modifiers[selectedResidue] = {
             remove: removeIsChecked,
             pka: removeIsChecked ? null : Number.parseFloat(pka.toString()),
-            ionType: selectedIonType
+            ionType: removeIsChecked ? null : selectedIonType
         }
 
         props.setModifiers(new_modifiers)

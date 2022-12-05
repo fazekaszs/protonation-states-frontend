@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import parseSequence from '../sequenceParser'
 import { ReqBodyType, ResBodyType, ReqResPairType, BaseDataType, ModifierMapType } from '../types'
 

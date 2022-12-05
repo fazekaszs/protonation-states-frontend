@@ -1,7 +1,7 @@
 import { ModifierMapType } from './types'
 
 type resiConfigType = {
-    [x: string]: [number, number] | [number, number, number, string]
+    [x: string]: [number, number] | [number, number, number, string] | null
 }
 
 const resiConfig: resiConfigType = {
@@ -34,6 +34,8 @@ const parseChar = (char: string, kaType: 'SC' | 'NT' | 'CT'): string | null => {
 
     const resiValues = resiConfig[char]
 
+    if (!resiValues) return null
+
     if (kaType === 'SC' && resiValues.length === 2) return null
 
     if (kaType === 'SC') return `${resiValues[3]}, ${resiValues[2]}`        
@@ -49,39 +51,58 @@ const parseSequence = (sequence: string, modifiers: ModifierMapType): string[] |
 
     let output: string[] = []
 
+    // Handle the N-terminal residue:
+
+    const ntKey = `0 ${sequence[0]} NT`
+    const ntKeyInModifiers = ntKey in modifiers
+    const ntResiInConfig = sequence[0] in resiConfig
+
+    if (ntKeyInModifiers && modifiers[ntKey].remove) { }
+
+    else if (ntKeyInModifiers) output.push(`${modifiers[ntKey].ionType}, ${modifiers[ntKey].pka}`)
+
+    else if (ntResiInConfig) {
+        const ionisableGroup = parseChar(sequence[0], 'NT')
+        if (ionisableGroup) output.push(ionisableGroup)
+    }
+
+    else return null
+
+    // Handle the C-terminal residue:
+
+    const ctKey = `0 ${sequence[0]} CT`
+    const ctKeyInModifiers = ctKey in modifiers
+    const ctResiInConfig = sequence[sequence.length - 1] in resiConfig
+
+    if (ctKeyInModifiers && modifiers[ctKey].remove) { }
+
+    else if (ctKeyInModifiers) output.push(`${modifiers[ctKey].ionType}, ${modifiers[ctKey].pka}`)
+
+    else if (ctResiInConfig) {
+        const ionisableGroup = parseChar(sequence[sequence.length - 1], 'CT')
+        if (ionisableGroup) output.push(ionisableGroup)
+    }
+
+    else return null
+
+    // Handle side chain residues:
+
     for (let idx = 0; idx < sequence.length; idx++) {
 
         const scKey = `${idx} ${sequence[idx]} SC`
-        const isInModifiers = scKey in modifiers
-        const foundInConfig = sequence[idx] in resiConfig
+        const scKeyInModifiers = scKey in modifiers
+        const scResiInConfig = sequence[idx] in resiConfig
 
-        if (!isInModifiers && !foundInConfig) return null
+        if (scKeyInModifiers && modifiers[scKey].remove) continue
 
-        if (isInModifiers && modifiers[scKey].remove) continue
+        else if (scKeyInModifiers) output.push(`${modifiers[scKey].ionType}, ${modifiers[scKey].pka}`)
 
-        // if (isInModifiers)
-    }
+        else if (scResiInConfig) {
+            const ionisableGroup = parseChar(sequence[idx], 'SC')
+            if (ionisableGroup) output.push(ionisableGroup)
+        }
 
-    if (sequence[0] !== '*') {
-
-        const ionisableGroup = parseChar(sequence[0], 'NT')
-        if (!ionisableGroup) return null
-        output.push(ionisableGroup)
-
-    } else sequence = sequence.slice(1)
-
-    if (sequence[sequence.length - 1] !== '*') {
-
-        const ionisableGroup = parseChar(sequence[sequence.length - 1], 'CT')
-        if (!ionisableGroup) return null
-        output.push(ionisableGroup)
-
-    } else sequence = sequence.slice(0, sequence.length - 1)
-
-    for (const resi of sequence) {
-
-        const ionisableGroup = parseChar(resi, 'SC')
-        if (ionisableGroup) output.push(ionisableGroup)        
+        else return null
     }
 
     return output

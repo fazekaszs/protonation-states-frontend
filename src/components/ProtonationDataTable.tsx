@@ -39,11 +39,10 @@ const ProtonationDataTable = ({ reqResPair }: { reqResPair: ReqResPairType }) =>
 
         let prevalenceSum: number = 0
         for (const charge of tableColLabelsVec) {
-            if (`${charge}` in macrostates) {
-                rowElements.push(macrostates[`${charge}`])
-            } else {
-                rowElements.push(0.0)
-            }
+
+            if (`${charge}` in macrostates) rowElements.push(macrostates[`${charge}`])
+            else rowElements.push(0.0)
+
             prevalenceSum += rowElements[rowElements.length - 1]
         }
 
@@ -56,7 +55,7 @@ const ProtonationDataTable = ({ reqResPair }: { reqResPair: ReqResPairType }) =>
 
     return(
         <mui.TableContainer component={mui.Paper}>
-            <mui.Table>
+            <mui.Table stickyHeader={true}>
 
                 <mui.TableHead>
                     <mui.TableRow>
