@@ -21,7 +21,7 @@ const useFetchApiData = (): HookReturnType => {
 
         const reqBody: ReqBodyType = {
             sequence: parsedSeq,
-            ph_range: baseData.ph_range,
+            ph_range: baseData.phRange,
             tol: baseData.tol
         }
 

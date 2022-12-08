@@ -1,5 +1,5 @@
 import * as mui from '@mui/material'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { cardBoxStyle } from "../sxStyles"
 import { BaseDataType, ModifierMapType } from '../types'

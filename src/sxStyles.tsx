@@ -2,8 +2,8 @@ export const rootBoxStyle = {
     display: 'flex',
     flexDirection: 'column',
     position: 'absolute',
-    width: '100%',
-    height: '100%',
+    width: '99%',
+    height: '99%',
     justifyContent: 'center',
     alignItems: 'center'
 }

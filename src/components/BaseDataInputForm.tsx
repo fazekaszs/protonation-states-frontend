@@ -15,20 +15,20 @@ const formDataParser = (event: React.FormEvent<HTMLFormElement>) => {
 
     const data = new FormData(event.currentTarget)
     const sequence = data.get('sequence') || ''
-    const ph_start = data.get('ph_start') || ''
-    const ph_end = data.get('ph_end') || ''
-    const ph_step = data.get('ph_step') || ''
+    const phStart = data.get('ph_start') || ''
+    const phEnd = data.get('ph_end') || ''
+    const phStep = data.get('ph_step') || ''
     const tol = data.get('tol') || ''
 
     const ph_range: [number, number, number] = [
-        Number.parseFloat(ph_start.toString()), 
-        Number.parseFloat(ph_end.toString()), 
-        Number.parseFloat(ph_step.toString())
+        Number.parseFloat(phStart.toString()), 
+        Number.parseFloat(phEnd.toString()), 
+        Number.parseFloat(phStep.toString())
     ]
 
     const parsedFormData: BaseDataType = {
         sequence: sequence.toString(),
-        ph_range: ph_range,
+        phRange: ph_range,
         tol: Number.parseFloat(tol.toString())
     }
 

@@ -3,12 +3,12 @@ import { useState } from 'react'
 
 import { rootBoxStyle, cardBoxStyle } from './sxStyles'
 
-import ProtonationDataTable from './components/ProtonationDataTable'
 import BaseDataInputForm from './components/BaseDataInputForm'
 
 import useFetchApiData from './hooks/useFetchApiData'
 import PKaModifierBox from './components/PKaModifierBox'
 import { BaseDataType } from './types'
+import ResultDisplayer from './components/ResultDisplayer'
 
 const App = () => {
 
@@ -33,8 +33,11 @@ const App = () => {
             </mui.Box>
             
 
-            <mui.Box sx={{...cardBoxStyle, width: '90%', overflow: 'scroll'}}>
-                {reqResPair ? <ProtonationDataTable reqResPair={reqResPair} /> : <p>Your data will appear here!</p>}
+            <mui.Box sx={{...cardBoxStyle, width: '90%', overflow: 'hidden'}}>
+                {reqResPair ? 
+                    <ResultDisplayer phRange={reqResPair.req.ph_range} protonationData={reqResPair.res} /> : 
+                    <p>Your data will appear here!</p>
+                }
             </mui.Box>
 
 
