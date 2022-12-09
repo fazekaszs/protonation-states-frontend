@@ -20,7 +20,9 @@ const processResults = (phRange: [number, number, number], protonationData: ResB
         for (const charge in macrostates) macrostateChargeSet.add(Number.parseInt(charge))
     }
 
-    let macrostateChargeVec = Array.from(macrostateChargeSet).sort()
+    // We need a comparator function in sort, otherwise stupid JS sorts the values
+    // as if they were strings... 
+    let macrostateChargeVec = Array.from(macrostateChargeSet).sort((a, b) => a - b)
 
     // Get the table elements
 
@@ -93,6 +95,59 @@ const ProtonationDataTable = (props: CreateTablePropsType) => {
         </mui.TableContainer>)
 }
 
+const ProtonationDataPlot = (props: CreateTablePropsType) => {
+    
+    let dataContainer: Plotly.Data[] = []
+
+    const traceNames = props.macrostateChargeVec.map((x) => `${x}`)
+    traceNames.push('ignored')
+
+    const minCharge = Math.min(...props.macrostateChargeVec)
+    const maxCharge = Math.max(...props.macrostateChargeVec)
+    const traceColors = props.macrostateChargeVec
+        .map((x) => Math.floor(255 * (x - minCharge) / (maxCharge - minCharge)))
+        .map((x) => `rgb(${255 - x}, 0, ${x})`)
+    traceColors.push('rgb(0, 0, 0)')
+
+    for (let idx = 0; idx < traceNames.length; idx++) {
+        const macroStatePropensities = props.tableElements.map((row) => row[idx])
+        dataContainer.push({
+            x: props.phValues,
+            y: macroStatePropensities,
+            type: 'scatter',
+            mode: 'lines',
+            name: traceNames[idx],
+            marker: {
+                color: traceColors[idx]
+            }
+        })
+    }
+
+    // See:
+    // https://github.com/plotly/react-plotly.js/#basic-props
+    // https://plotly.com/javascript/configuration-options/
+    // https://plotly.com/javascript/reference/scatter/
+    // 
+    return <Plot
+        data={dataContainer}
+        layout={{
+            height: 470,
+            width: 470,
+            xaxis: { title: 'pH values' },
+            yaxis: { title: 'macrostate prevalences' }
+        }}
+        config={{
+            toImageButtonOptions: {
+                format: 'svg',
+                height: 1000,
+                width: 1000
+            }
+        }}
+        
+    />
+
+}
+
 type ResultDisplayerPropsType = {
     phRange: [number, number, number],
     protonationData: ResBodyType
@@ -111,19 +166,10 @@ const ResultDisplayer = (props: ResultDisplayerPropsType) => {
                 tableElements={tableElements}
             />
 
-            <Plot
-
-                data={[{
-                    x: [1, 2, 3],
-                    y: [2, 3, 4],
-                    type: 'scatter',
-                    mode: 'lines',
-                }]}
-
-                layout={{
-                    height: 370,
-                    width: 370
-                }}
+            <ProtonationDataPlot
+                macrostateChargeVec={macrostateChargeVec} 
+                phValues={phValues}
+                tableElements={tableElements}                
             />
 
         </mui.Box>

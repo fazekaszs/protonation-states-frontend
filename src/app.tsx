@@ -33,7 +33,7 @@ const App = () => {
             </mui.Box>
             
 
-            <mui.Box sx={{...cardBoxStyle, width: '90%', overflow: 'hidden'}}>
+            <mui.Box sx={{...cardBoxStyle, height: '500px', width: '90%', overflow: 'hidden'}}>
                 {reqResPair ? 
                     <ResultDisplayer phRange={reqResPair.req.ph_range} protonationData={reqResPair.res} /> : 
                     <p>Your data will appear here!</p>
