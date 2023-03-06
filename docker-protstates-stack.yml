@@ -1,0 +1,43 @@
+version: '3.7'
+networks:
+  default:
+    name: protstates-nw
+    external: true
+services:
+  frontend:
+    image: protstates-front:0.0.1
+    networks:
+      - default
+    ports:
+      - "8282:8282"
+    environment:
+      - PORT=8282
+      - BACKEND_PATH=http://backend:8181/protonations
+    command:
+      - "-c"
+      - |
+        npm run start
+    deploy:
+      restart_policy:
+        condition: any
+    entrypoint: /bin/bash
+    stdin_open: true
+    tty: true
+  backend:
+    image: protstates-back:0.0.1
+    networks:
+      - default
+    ports:
+      - "8181:8181"
+    environment:
+      - ROCKET_PORT=8181
+    command:
+      - "-c"
+      - |
+        protonation-states-backend
+    deploy:
+      restart_policy:
+        condition: any
+    entrypoint: /bin/bash
+    stdin_open: true
+    tty: true

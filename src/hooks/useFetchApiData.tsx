@@ -25,9 +25,9 @@ const useFetchApiData = (): HookReturnType => {
             tol: baseData.tol
         }
 
-        const backendPort = process.env.BACKEND_PORT ? process.env.BACKEND_PORT : 8181
+        const backendPort: string = process.env.BACKEND_PATH ? process.env.BACKEND_PATH : 'http://localhost:8181/protonations'
 
-        const fetchResult = await fetch(`http://localhost:${backendPort}/protonations`, {
+        const fetchResult = await fetch(backendPort, {
             method: 'POST',
             body: JSON.stringify(reqBody),
             headers: { 'Content-Type': 'application/json' }
