@@ -15,7 +15,7 @@ const useFetchApiData = (): HookReturnType => {
 
         const parsedSeq = parseSequence(baseData.sequence, modifiers)
         if (!parsedSeq) {
-            console.log("FAILED")
+            console.error(`FAILED: I was unable to parse the sequence! The sequence is:\n${baseData.sequence}`)
             return
         }
 
@@ -25,7 +25,12 @@ const useFetchApiData = (): HookReturnType => {
             tol: baseData.tol
         }
 
-        const backendPort: string = process.env.BACKEND_PATH ? process.env.BACKEND_PATH : 'http://localhost:8181/protonations'
+        const backendPort = process.env.REACT_APP_BACKEND_PATH
+
+        if (!backendPort) {
+            console.error('FAILED: I was unable to access the environmental variable \"REACT_APP_BACKEND_PATH\"!')
+            return            
+        }
 
         const fetchResult = await fetch(backendPort, {
             method: 'POST',
