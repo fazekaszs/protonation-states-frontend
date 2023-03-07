@@ -70,7 +70,7 @@ const parseSequence = (sequence: string, modifiers: ModifierMapType): string[] |
 
     // Handle the C-terminal residue:
 
-    const ctKey = `0 ${sequence[0]} CT`
+    const ctKey = `${sequence.length - 1} ${sequence[0]} CT`
     const ctKeyInModifiers = ctKey in modifiers
     const ctResiInConfig = sequence[sequence.length - 1] in resiConfig
 
