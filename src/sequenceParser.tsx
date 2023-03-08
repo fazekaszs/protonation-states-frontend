@@ -4,6 +4,7 @@ type resiConfigType = {
     [x: string]: [number, number] | [number, number, number, string] | null
 }
 
+// Source: https://wou.edu/chemistry/files/2019/07/table-of-pka-values.jpg
 const resiConfig: resiConfigType = {
     'G': [2.34, 9.60],
     'A': [2.34, 9.69],
@@ -70,7 +71,7 @@ const parseSequence = (sequence: string, modifiers: ModifierMapType): string[] |
 
     // Handle the C-terminal residue:
 
-    const ctKey = `${sequence.length - 1} ${sequence[0]} CT`
+    const ctKey = `${sequence.length - 1} ${sequence[sequence.length - 1]} CT`
     const ctKeyInModifiers = ctKey in modifiers
     const ctResiInConfig = sequence[sequence.length - 1] in resiConfig
 
