@@ -34,15 +34,22 @@ const processResults = (phRange: [number, number, number], protonationData: ResB
         let rowElements: number[] = []
 
         let prevalenceSum: number = 0
+        let averageCharge: number = 0
         for (const charge of macrostateChargeVec) {
 
-            if (`${charge}` in macrostates) rowElements.push(macrostates[`${charge}`])
+            if (`${charge}` in macrostates) {
+                rowElements.push(macrostates[`${charge}`])
+                averageCharge += rowElements[rowElements.length - 1] * charge
+            }
             else rowElements.push(0.0)
 
             prevalenceSum += rowElements[rowElements.length - 1]
         }
 
+        averageCharge /= prevalenceSum
+
         rowElements.push(1.0 - prevalenceSum)  // ignored fraction
+        rowElements.push(averageCharge) // the average charge at the given pH
 
         tableElements.push(rowElements)
 
@@ -63,7 +70,8 @@ const ProtonationDataTable = (props: CreateTablePropsType) => {
     const jsxTableHeader = [
         <mui.TableCell sx={{ fontWeight:'bold' }}>pH</mui.TableCell>,
         ...props.macrostateChargeVec.map((x) => <mui.TableCell sx={{ fontWeight:'bold' }}>{x}</mui.TableCell>),
-        <mui.TableCell sx={{ fontWeight:'bold' }}>ignored</mui.TableCell>
+        <mui.TableCell sx={{ fontWeight:'bold' }}>ignored</mui.TableCell>,
+        <mui.TableCell sx={{ fontWeight:'bold' }}>average charge</mui.TableCell>
     ]
 
     var jsxTableBody = []
@@ -101,16 +109,18 @@ const ProtonationDataPlot = (props: CreateTablePropsType) => {
 
     const traceNames = props.macrostateChargeVec.map((x) => `${x}`)
     traceNames.push('ignored')
+    traceNames.push('average charge')
 
     const minCharge = Math.min(...props.macrostateChargeVec)
     const maxCharge = Math.max(...props.macrostateChargeVec)
     const traceColors = props.macrostateChargeVec
         .map((x) => Math.floor(255 * (x - minCharge) / (maxCharge - minCharge)))
         .map((x) => `rgb(${255 - x}, 0, ${x})`)
-    traceColors.push('rgb(0, 0, 0)')
+    traceColors.push('rgb(0, 0, 0)')  // color for the ignored fraction
+    traceColors.push('rgb(0, 255, 0)')  // color for the average charge
 
     for (let idx = 0; idx < traceNames.length; idx++) {
-        const macroStatePropensities = props.tableElements.map((row) => row[idx])
+        const macroStatePropensities = props.tableElements.map((row) => row[idx])  // get column at idx
         dataContainer.push({
             x: props.phValues,
             y: macroStatePropensities,
