@@ -1,35 +1,14 @@
+// pka_table0.json:
+//     Source: https://wou.edu/chemistry/files/2019/07/table-of-pka-values.jpg
+//     X = Cystine
+
 import { ModifierMapType } from './types'
 
 type resiConfigType = {
     [x: string]: [number, number] | [number, number, number, string] | null
 }
 
-// Source: https://wou.edu/chemistry/files/2019/07/table-of-pka-values.jpg
-const resiConfig: resiConfigType = {
-    'G': [2.34, 9.60],
-    'A': [2.34, 9.69],
-    'V': [2.32, 9.62],
-    'L': [2.36, 9.68],
-    'I': [2.36, 9.68],
-    'P': [1.99, 10.6],
-    'M': [2.28, 9.21],
-    'F': [1.83, 9.13],
-    'Y': [2.20, 9.11, 10.07, 'NeuOrNeg'],
-    'W': [2.38, 9.39],
-    'S': [2.21, 9.15],
-    'T': [2.63, 10.43],
-    'C': [1.71, 10.78, 8.33, 'NeuOrNeg'],
-    'X': [1.71, 10.78],  // Cystine
-    'N': [2.02, 8.80],
-    'Q': [2.17, 9.13],
-    'D': [2.09, 9.82, 3.86, 'NeuOrNeg'],
-    'E': [2.19, 9.67, 4.25, 'NeuOrNeg'],
-    'R': [2.17, 9.04, 12.48, 'PosOrNeu'],
-    'H': [1.82, 9.17, 6.00, 'PosOrNeu'],
-    'K': [2.18, 8.95, 10.53, 'PosOrNeu'],
-}
-
-const parseChar = (char: string, kaType: 'SC' | 'NT' | 'CT'): string | null => {
+const parseChar = (char: string, kaType: 'SC' | 'NT' | 'CT', resiConfig: resiConfigType): string | null => {
 
     if (!(char in resiConfig)) return null
 
@@ -46,7 +25,9 @@ const parseChar = (char: string, kaType: 'SC' | 'NT' | 'CT'): string | null => {
     return null
 }
 
-const parseSequence = (sequence: string, modifiers: ModifierMapType): string[] | null => {
+const parseSequence = (sequence: string, modifiers: ModifierMapType, pkaTableIdx: number): string[] | null => {
+
+    const resiConfig: resiConfigType = require(`./resources/pka_table${pkaTableIdx}.json`)
 
     sequence = sequence.replace('\n', '').replace(' ', '')
 
@@ -63,7 +44,7 @@ const parseSequence = (sequence: string, modifiers: ModifierMapType): string[] |
     else if (ntKeyInModifiers) output.push(`${modifiers[ntKey].ionType}, ${modifiers[ntKey].pka}`)
 
     else if (ntResiInConfig) {
-        const ionisableGroup = parseChar(sequence[0], 'NT')
+        const ionisableGroup = parseChar(sequence[0], 'NT', resiConfig)
         if (ionisableGroup) output.push(ionisableGroup)
     }
 
@@ -80,7 +61,7 @@ const parseSequence = (sequence: string, modifiers: ModifierMapType): string[] |
     else if (ctKeyInModifiers) output.push(`${modifiers[ctKey].ionType}, ${modifiers[ctKey].pka}`)
 
     else if (ctResiInConfig) {
-        const ionisableGroup = parseChar(sequence[sequence.length - 1], 'CT')
+        const ionisableGroup = parseChar(sequence[sequence.length - 1], 'CT', resiConfig)
         if (ionisableGroup) output.push(ionisableGroup)
     }
 
@@ -99,7 +80,7 @@ const parseSequence = (sequence: string, modifiers: ModifierMapType): string[] |
         else if (scKeyInModifiers) output.push(`${modifiers[scKey].ionType}, ${modifiers[scKey].pka}`)
 
         else if (scResiInConfig) {
-            const ionisableGroup = parseChar(sequence[idx], 'SC')
+            const ionisableGroup = parseChar(sequence[idx], 'SC', resiConfig)
             if (ionisableGroup) output.push(ionisableGroup)
         }
 

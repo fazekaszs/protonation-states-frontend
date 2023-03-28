@@ -4,16 +4,16 @@ import { ReqBodyType, ResBodyType, ReqResPairType, BaseDataType, ModifierMapType
 
 type HookReturnType = [
     ReqResPairType | null,
-    (baseData: BaseDataType, modifiers: ModifierMapType) => Promise<void>
+    (baseData: BaseDataType, modifiers: ModifierMapType, pkaTableIdx: number) => Promise<void>
 ]
 
 const useFetchApiData = (): HookReturnType => {
 
     const [reqResPair, setReqResPair] = useState<ReqResPairType | null>(null)
 
-    const fetchApiData = async (baseData: BaseDataType, modifiers: ModifierMapType) => {
+    const fetchApiData = async (baseData: BaseDataType, modifiers: ModifierMapType, pkaTableIdx: number) => {
 
-        const parsedSeq = parseSequence(baseData.sequence, modifiers)
+        const parsedSeq = parseSequence(baseData.sequence, modifiers, pkaTableIdx)
         if (!parsedSeq) {
             console.error(`FAILED: I was unable to parse the sequence! The sequence is:\n${baseData.sequence}`)
             return

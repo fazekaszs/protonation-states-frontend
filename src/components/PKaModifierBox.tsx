@@ -1,14 +1,16 @@
 import * as mui from '@mui/material'
+import { SelectChangeEvent } from '@mui/material'
 import { useEffect, useState } from 'react'
 
 import { cardBoxStyle } from "../sxStyles"
 import { BaseDataType, ModifierMapType } from '../types'
 import PKaModifierModalBox from './PKaModifierModalBox'
+import PKaTableSelector from './PKaTableSelector'
 
 type PropsType = {
     baseData: BaseDataType,
     disabled: boolean,
-    apiDataFetcher: (baseData: BaseDataType, modifiers: ModifierMapType) => Promise<void>
+    apiDataFetcher: (baseData: BaseDataType, modifiers: ModifierMapType, pkaTableIdx: number) => Promise<void>
 }
 
 const PKaModifierBox = (props: PropsType) => {
@@ -16,6 +18,7 @@ const PKaModifierBox = (props: PropsType) => {
     const [modalIsOpen, setModalState] = useState<boolean>(false)
     const [modifiers, setModifiers] = useState<ModifierMapType>({})
     const [modifierJSXList, setModifierJSXList] = useState<JSX.Element[]>([])
+    const [pkaTableIdx, setPkaTableIdx] = useState<number>(0)
 
     const refreshModifierJSXList = () => {
 
@@ -49,6 +52,10 @@ const PKaModifierBox = (props: PropsType) => {
         setModifierJSXList(newJSXListElements)
     }
 
+    const handlePkaTableSelection = (event: SelectChangeEvent) => {
+        setPkaTableIdx(Number.parseInt(event.target.value))
+    }
+
     useEffect(() => setModifiers({}), [props.baseData, ])
 
     useEffect(refreshModifierJSXList, [modifiers, ])
@@ -58,6 +65,13 @@ const PKaModifierBox = (props: PropsType) => {
     // https://github.com/mui/material-ui/issues/31261
     return(
         <mui.Box sx={{...cardBoxStyle, width: '60%'}}>
+
+            <PKaTableSelector 
+                pkaTableIdx={pkaTableIdx} 
+                handlePkaTableSelection={handlePkaTableSelection} 
+            />
+
+            <hr style={{ width: '80%' }} />
 
             <mui.List sx={{ overflowY: 'scroll', height: '100%', width: '80%' }}>
                 {modifierJSXList}
@@ -71,7 +85,7 @@ const PKaModifierBox = (props: PropsType) => {
 
             <mui.Button 
                 disabled={props.disabled} 
-                onClick={(_event) => props.apiDataFetcher(props.baseData, modifiers)}
+                onClick={(_event) => props.apiDataFetcher(props.baseData, modifiers, pkaTableIdx)}
             >
                 submit
             </mui.Button>
